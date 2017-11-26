@@ -1,0 +1,26 @@
+{
+    "name": "netcore/module-payment",
+    "description": "",
+    "type": "module",
+    "authors": [
+        {
+            "name": "Daniels Grietiņš",
+            "email": "daniels.grietins@netcore.lv"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Payment\\Providers\\PaymentServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Payment\\": ""
+        }
+    }
+}
