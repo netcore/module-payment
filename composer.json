@@ -22,5 +22,9 @@
         "psr-4": {
             "Modules\\Payment\\": ""
         }
-    }
+    },
+    "require": {
+        "rmccue/requests": "^1.7"
+    },
+    "minimum-stability": "dev"
 }

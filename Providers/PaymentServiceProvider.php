@@ -4,6 +4,7 @@ namespace Modules\Payment\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Modules\Payment\Repositories\PaymentRepository;
 
 class PaymentServiceProvider extends ServiceProvider
 {
@@ -35,7 +36,9 @@ class PaymentServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton('payment', function ($app) {
+            return new PaymentRepository();
+        });
     }
 
     /**
@@ -46,10 +49,10 @@ class PaymentServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->publishes([
-            __DIR__.'/../Config/config.php' => config_path('payment.php'),
+            __DIR__.'/../Config/config.php' => config_path('netcore/module-payment.php'),
         ], 'config');
         $this->mergeConfigFrom(
-            __DIR__.'/../Config/config.php', 'payment'
+            __DIR__.'/../Config/config.php', 'netcore/module-payment'
         );
     }
 
