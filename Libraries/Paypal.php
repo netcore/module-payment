@@ -7,7 +7,7 @@ use Requests;
 class Paypal
 {
 
-    private $clientId, $clientSecret;
+    private $clientId, $clientSecret, $url;
 
     /**
      * Paypal constructor.
@@ -16,6 +16,13 @@ class Paypal
     {
         $this->clientId = config('netcore.module-payment.paypal.client_id');
         $this->clientSecret = config('netcore.module-payment.paypal.client_secret');
+
+        $sandbox = config('netcore.module-payment.paypal.sandbox');
+        if ($sandbox) {
+            $this->url = 'https://api.sandbox.paypal.com';
+        } else {
+            $this->url = 'https://api.paypal.com';
+        }
     }
 
     /**
@@ -27,15 +34,15 @@ class Paypal
             'Content-Type' => 'application/x-www-form-urlencoded'
         ];
         $options = [
-            'auth' => [
+            'auth'            => [
                 $this->clientId,
                 $this->clientSecret
 
             ],
             'connect-timeout' => 1000, // 1min
-            'timeout' => 1000 // 1min
+            'timeout'         => 1000 // 1min
         ];
-        $url = 'https://api.sandbox.paypal.com/v1/oauth2/token';
+        $url = $this->url . '/v1/oauth2/token';
         $data = [
             'grant_type' => 'client_credentials'
         ];
@@ -82,9 +89,9 @@ class Paypal
         ];
         $options = [
             'connect-timeout' => 1000, // 1min
-            'timeout' => 1000 // 1min
+            'timeout'         => 1000 // 1min
         ];
-        $url = 'https://api.sandbox.paypal.com/v1/payments/payment';
+        $url = $this->url . '/v1/payments/payment';
         $data = [
             'intent'        => 'sale',
             'redirect_urls' => [

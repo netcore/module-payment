@@ -10,14 +10,16 @@ use Modules\Payment\Modules\Payment;
 class PaymentRepository
 {
 
-    private $config, $paymentMethod;
+    private $config, $paymentMethod, $user, $invoice = false;
 
     /**
      * ContactRepository constructor.
+     * @param null $user
      */
-    public function __construct()
+    public function __construct($user = null)
     {
         $this->config = config('netcore.module-payment');
+        $this->user = $user;
     }
 
     /**
@@ -31,35 +33,63 @@ class PaymentRepository
     }
 
     /**
-     * @param $amount
-     * @param $currency
-     * @param null $successUrl
-     * @param null $errorUrl
+     * @param $data
+     * @return $this
+     */
+    public function withInvoice($data)
+    {
+        $this->invoice = true;
+
+        invoice()
+            ->forUser($data['user'])
+            ->setItems($data['items'])
+            ->setPaymentDetails($data['method'])
+            ->setSender($data['sender_data'])
+            ->make();
+
+        return $this;
+    }
+
+    /**
+     * @param $data
      * @return array
      */
-    public function makePayment($amount, $currency, $successUrl = null, $errorUrl = null)
+    public function makePayment($data)
     {
         if($this->paymentMethod == 'paypal') {
-            return $this->makePaypalPayment($amount, $currency, $successUrl, $errorUrl);
+            return $this->makePaypalPayment($data);
         } else {
 
         }
     }
 
     /**
-     * @param $amount
-     * @param $currency
-     * @param null $successUrl
-     * @param null $errorUrl
+     * @param $data
      * @return array
      */
-    private function makePaypalPayment($amount, $currency, $successUrl = null, $errorUrl = null)
+    private function makePaypalPayment($data)
     {
         $paypal = new Paypal;
 
-        $response = $paypal->requestPayment($amount, $currency, $successUrl, $errorUrl);
+        $response = $paypal->requestPayment($data['amount'], $data['currency'], $data['successUrl'], $data['errorUrl']);
+
+        if($response['type'] == 'success' && $this->invoice) {
+            $this->makePaymentEntry($data['user'], $data['amount']);
+        }
 
         return $response;
     }
 
+    /**
+     * @param $user
+     * @param $amount
+     */
+    private function makePaymentEntry($user, $amount)
+    {
+        $user->payments()->create([
+            'amount' => $amount,
+            'state'  => null,
+            'method' => 'paypal'
+        ]);
+    }
 }
