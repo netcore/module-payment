@@ -14,8 +14,11 @@ class Payment extends Model
      */
     protected $table = 'netcore_payment__payments';
 
-    protected $fillable = ['user_id', 'amount', 'state', 'status', 'method'];
+    protected $fillable = ['user_id', 'amount', 'state', 'status', 'method', 'is_active', 'data'];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user()
     {
         return $this->belongsTo(User::class);

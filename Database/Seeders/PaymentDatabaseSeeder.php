@@ -18,21 +18,34 @@ class PaymentDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        $menus = [
+        $menuItems = [
             'leftAdminMenu' => [
                 [
                     'name'       => 'Payments',
                     'icon'       => 'fa-credit-card',
-                    'type'       => 'route',
-                    'value'      => 'admin::payment.index',
+                    'type'       => 'url',
+                    'value'      => 'javascript:;',
                     'module'     => 'Payment',
                     'is_active'  => 1,
                     'parameters' => json_encode([]),
+                    'active_resolver' => 'admin::payment.*,admin.payment-config.*',
+
+                    'children' => [
+                        [
+                            'name'            => 'Payment list',
+                            'type'            => 'route',
+                            'value'           => 'admin::payment.index',
+                            'module'          => '',
+                            'is_active'       => 1,
+                            'active_resolver' => 'admin::payment.*',
+                            'parameters'      => json_encode([])
+                        ]
+                    ]
                 ],
             ]
         ];
 
-        foreach ($menus as $key => $items) {
+        foreach ($menuItems as $key => $items) {
             $menu = Menu::firstOrCreate([
                 'key' => $key
             ]);
@@ -45,9 +58,8 @@ class PaymentDatabaseSeeder extends Seeder
             }
             $menu->updateTranslations($translations);
 
-
             foreach ($items as $item) {
-                $row = $menu->items()->firstOrCreate(array_except($item, ['name', 'value', 'parameters']));
+                $row = $menu->items()->firstOrCreate(array_except($item, ['name', 'value', 'parameters', 'children']));
 
                 $translations = [];
                 foreach (TransHelper::getAllLanguages() as $language) {
@@ -58,6 +70,21 @@ class PaymentDatabaseSeeder extends Seeder
                     ];
                 }
                 $row->updateTranslations($translations);
+
+                foreach ($item['children'] as $child) {
+                    $child['menu_id'] = $menu->id;
+
+                    $c = $row->children()->firstOrCreate(array_except($child, ['name', 'value', 'parameters']));
+                    $translations = [];
+                    foreach (TransHelper::getAllLanguages() as $language) {
+                        $translations[$language->iso_code] = [
+                            'name'       => $child['name'],
+                            'value'      => $child['value'],
+                            'parameters' => $child['parameters']
+                        ];
+                    }
+                    $c->updateTranslations($translations);
+                }
             }
         }
     }

@@ -18,15 +18,15 @@ class CreateNetcorePaymentPaymentsTable extends Migration
             $table->unsignedInteger('user_id');
             $table->decimal('amount');
             $table->enum('state', [
-                'successful', 'failed'
-            ])->nullable();
+                'successful', 'failed', 'in_process'
+            ])->default('in_process');
             $table->enum('status', [
                 'active', 'closed'
             ]);
             $table->enum('method', [
                 'paypal', 'creditcard', 'sms'
             ]);
-
+            $table->boolean('is_active');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
