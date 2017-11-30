@@ -26,14 +26,13 @@ class Paysera
      * @param $successUrl
      * @param $cancelUrl
      * @param $callbackUrl
-     * @return \Illuminate\Http\RedirectResponse|void
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function makePayment($user, $amount, $country, $currency, $successUrl, $cancelUrl, $callbackUrl)
     {
         try {
             $payment = $user->payments()->create([
                 'amount' => $amount,
-                'state'  => null,
                 'method' => 'creditcard'
             ]);
 
@@ -130,6 +129,8 @@ class Paysera
                     'method' => 'sms',
                     'data'   => json_encode($response)
                 ]);
+
+                $user->increment('wallet', number_format($amount/100, 0));
 
                 return [
                     'type' => 'success',

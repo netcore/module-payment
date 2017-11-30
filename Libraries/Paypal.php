@@ -2,6 +2,7 @@
 
 namespace Modules\Payment\Libraries;
 
+use Log;
 use Requests;
 
 class Paypal
@@ -14,13 +15,14 @@ class Paypal
      */
     public function __construct()
     {
-        $this->clientId = config('netcore.module-payment.paypal.client_id');
-        $this->clientSecret = config('netcore.module-payment.paypal.client_secret');
-
         $sandbox = config('netcore.module-payment.paypal.sandbox');
         if ($sandbox) {
+            $this->clientId = config('netcore.module-payment.paypal.credentials.sandbox.client_id');
+            $this->clientSecret = config('netcore.module-payment.paypal.credentials.sandbox.client_secret');
             $this->url = 'https://api.sandbox.paypal.com';
         } else {
+            $this->clientId = config('netcore.module-payment.paypal.credentials.live.client_id');
+            $this->clientSecret = config('netcore.module-payment.paypal.credentials.live.client_secret');
             $this->url = 'https://api.paypal.com';
         }
     }
@@ -47,7 +49,10 @@ class Paypal
             'grant_type' => 'client_credentials'
         ];
 
+
         $request = Requests::post($url, $headers, $data, $options);
+
+        \Log::info(print_r($request->body, true));
 
         if ($request->status_code != 200) {
             return [
@@ -114,6 +119,7 @@ class Paypal
         $request = Requests::post($url, $headers, json_encode($data), $options);
 
         $response = json_decode($request->body);
+
 
         \Log::info(print_r($response, true));
 

@@ -5,8 +5,17 @@ return [
         'enabled'           => true,
         'sandbox'           => true,
         'generate_invoices' => true, // Invoice module must be set up
-        'client_id'         => '',
-        'client_secret'     => '',
+        'credentials' => [
+            'sandbox' => [
+                'client_id'         => '',
+                'client_secret'     => '',
+            ],
+            'live' => [
+                'client_id'         => '',
+                'client_secret'     => '',
+            ]
+        ]
+
     ],
 
     'paysera' => [
