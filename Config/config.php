@@ -23,5 +23,13 @@ return [
         'sandbox'   => true,
         'projectId' => 0,
         'secret'    => ''
+    ],
+
+    'braintree' =>  [
+        'enabled'       =>  true,
+        'environment'   =>  'sandbox',
+        'merchant_id'   =>  '',
+        'public_key'    =>  '',
+        'private_key'   =>  '',
     ]
 ];

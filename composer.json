@@ -24,7 +24,8 @@
         }
     },
     "require": {
-        "rmccue/requests": "^1.7"
+        "rmccue/requests": "^1.7",
+        "laravel/cashier-braintree": "~2.0"
     },
     "minimum-stability": "dev"
 }

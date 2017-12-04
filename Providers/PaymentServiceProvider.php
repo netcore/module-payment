@@ -27,6 +27,23 @@ class PaymentServiceProvider extends ServiceProvider
         $this->registerViews();
         $this->registerFactories();
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+        $this->registerBreintree();
+    }
+
+    /**
+     * Register Braintree configuration
+     *
+     * @return void
+     */
+    public function registerBreintree()
+    {
+        if (config('netcore.module-payment.braintree.enabled'))
+        {
+            \Braintree_Configuration::environment(config('netcore.module-payment.braintree.environment'));
+            \Braintree_Configuration::merchantId(config('netcore.module-payment.braintree.merchant_id'));
+            \Braintree_Configuration::publicKey(config('netcore.module-payment.braintree.public_key'));
+            \Braintree_Configuration::privateKey(config('netcore.module-payment.braintree.private_key'));
+        }
     }
 
     /**
@@ -110,6 +127,8 @@ class PaymentServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [];
+        return [
+            Laravel\Cashier\CashierServiceProvider::class
+        ];
     }
 }
