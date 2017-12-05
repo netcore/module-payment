@@ -20,6 +20,7 @@ class CreateSubscriptionsTable extends Migration
             $table->string('name');
             $table->string('braintree_id')->index();
             $table->string('braintree_plan');
+            $table->string('plan_key')->index()->nullable();
             $table->integer('quantity');
             $table->timestamp('trial_ends_at')->nullable();
             $table->timestamp('ends_at')->nullable();
