@@ -30,11 +30,11 @@ class PaymentController extends Controller
 
         return Datatables::of($payments)
             ->editColumn('user_id', function ($payment) {
-                return $payment->user->name;
+                return $payment->user->first_name;
             })
-            ->editColumn('amount', function ($payment) {
+            /*->editColumn('amount', function ($payment) {
                 return $payment->amount . ' ' . get_currency($payment->user->language_iso_code);
-            })
+            })*/
             ->make(true);
     }
 }

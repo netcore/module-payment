@@ -2,8 +2,8 @@
 
 namespace Modules\Payment\Modules;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
 
 class Payment extends Model
 {
