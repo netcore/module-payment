@@ -16,15 +16,40 @@ class CreateSubscriptionsTable extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
 
             $table->increments('id');
-            $table->integer('user_id');
-            $table->string('name');
-            $table->string('braintree_id')->index();
-            $table->string('braintree_plan');
-            $table->string('plan_key')->index()->nullable();
+            $table->unsignedInteger('user_id');
+
+            $table->unsignedInteger('plan_id')
+                ->nullable();
+
+            $table->string('name')
+                ->index();
+
+            $table->string('braintree_id')
+                ->index();
+
+            $table->string('braintree_plan')
+                ->index();
+
             $table->integer('quantity');
-            $table->timestamp('trial_ends_at')->nullable();
-            $table->timestamp('ends_at')->nullable();
+
+            $table->timestamp('trial_ends_at')
+                ->nullable();
+
+            $table->timestamp('ends_at')
+                ->nullable();
+
             $table->timestamps();
+
+
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
+            $table->foreign('plan_id')
+                ->references('id')
+                ->on('netcore_subscription__plans')
+                ->onDelete('cascade');
 
         });
     }

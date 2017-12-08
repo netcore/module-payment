@@ -3,7 +3,9 @@
 namespace Modules\Payment\Modules;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User;
+use Modules\Invoice\Models\Invoice;
 
 class Payment extends Model
 {
@@ -22,5 +24,13 @@ class Payment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
     }
 }
