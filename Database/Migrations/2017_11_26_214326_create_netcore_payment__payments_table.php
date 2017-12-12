@@ -24,9 +24,9 @@ class CreateNetcorePaymentPaymentsTable extends Migration
                 'active', 'closed'
             ]);
             $table->enum('method', [
-                'paypal', 'creditcard', 'sms'
+                'paypal', 'creditcard', 'sms', 'braintree'
             ]);
-            $table->boolean('is_active');
+            $table->boolean('is_active')->default(0)->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
