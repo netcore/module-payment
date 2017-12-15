@@ -15,7 +15,7 @@ class CreateNetcorePaymentPaymentsTable extends Migration
     {
         Schema::create('netcore_payment__payments', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('user_id')->nullable();
             $table->decimal('amount');
             $table->enum('state', [
                 'successful', 'failed', 'in_process'

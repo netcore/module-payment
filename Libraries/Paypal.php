@@ -2,7 +2,6 @@
 
 namespace Modules\Payment\Libraries;
 
-use Log;
 use Requests;
 
 class Paypal
@@ -51,8 +50,6 @@ class Paypal
 
 
         $request = Requests::post($url, $headers, $data, $options);
-
-        \Log::info(print_r($request->body, true));
 
         if ($request->status_code != 200) {
             return [
@@ -109,7 +106,7 @@ class Paypal
             'transactions'  => [
                 [
                     'amount' => [
-                        'total'    => $amount,
+                        'total'    => (string)$amount,
                         'currency' => $currency
                     ]
                 ]
@@ -119,9 +116,6 @@ class Paypal
         $request = Requests::post($url, $headers, json_encode($data), $options);
 
         $response = json_decode($request->body);
-
-
-        \Log::info(print_r($response, true));
 
         if (!object_get($response, 'links')) {
             return [

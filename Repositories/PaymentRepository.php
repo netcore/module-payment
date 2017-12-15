@@ -98,11 +98,19 @@ class PaymentRepository
      */
     private function makePaymentEntry($user, $amount, $method)
     {
-        $user->payments()->create([
-            'amount' => $amount,
-            'state'  => 'in_process',
-            'method' => $method
-        ]);
+        if($user) {
+            $user->payments()->create([
+                'amount' => $amount,
+                'state'  => 'in_process',
+                'method' => $method
+            ]);
+        } else {
+            Payment::create([
+                'amount' => $amount,
+                'state'  => 'in_process',
+                'method' => $method
+            ]);
+        }
     }
 
     /**
