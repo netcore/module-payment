@@ -41,7 +41,7 @@
                 order: [[0, "desc"]],
                 columns: [
                     { data: 'id', name: 'id', orderable: true, searchable: true },
-                    { data: 'user_id', name: 'user.name', orderable: true, searchable: true },
+                    { data: 'user_id', name: 'user.{{ $userNameColumn }}', orderable: true, searchable: true },
                     { data: 'amount', name: 'amount', orderable: true, searchable: true },
                     { data: 'state', name: 'state', orderable: true, searchable: true },
                     { data: 'status', name: 'status', orderable: true, searchable: true },

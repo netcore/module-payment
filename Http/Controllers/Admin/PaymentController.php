@@ -16,7 +16,13 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        return view('payment::index');
+        $userNameColumn = config('netcore.module-payment.datatables.user_id');
+
+        if(!$userNameColumn) {
+            $userNameColumn = 'name';
+        }
+
+        return view('payment::index', compact('userNameColumn'));
     }
 
     /**
