@@ -9,6 +9,16 @@ use Modules\Invoice\Models\Invoice;
 
 class Payment extends Model
 {
+
+    /**
+     *
+     */
+    const STATE_OPTIONS = [
+        'successful' => 'Successful',
+        'failed'     => 'Failed',
+        'in_process' => 'In process',
+    ];
+
     /**
      * The table associated with the model.
      *
