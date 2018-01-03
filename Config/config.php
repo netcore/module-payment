@@ -26,7 +26,7 @@ return [
     ],
 
     'braintree' =>  [
-        'enabled'       =>  true,
+        'enabled'       =>  env('APP_ENV') == 'production' ? 'production' : 'sandbox',
         'environment'   =>  'sandbox',
         'merchant_id'   =>  '',
         'public_key'    =>  '',

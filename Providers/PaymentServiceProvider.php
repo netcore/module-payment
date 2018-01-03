@@ -40,9 +40,9 @@ class PaymentServiceProvider extends ServiceProvider
         if (config('netcore.module-payment.braintree.enabled'))
         {
             \Braintree_Configuration::environment(config('netcore.module-payment.braintree.environment'));
-            \Braintree_Configuration::merchantId(config('netcore.module-payment.braintree.merchant_id'));
-            \Braintree_Configuration::publicKey(config('netcore.module-payment.braintree.public_key'));
-            \Braintree_Configuration::privateKey(config('netcore.module-payment.braintree.private_key'));
+            \Braintree_Configuration::merchantId(setting()->get('braintree_merchant_id', config('netcore.module-payment.braintree.merchant_id')));
+            \Braintree_Configuration::publicKey(setting()->get('braintree_public_key', config('netcore.module-payment.braintree.public_key')));
+            \Braintree_Configuration::privateKey(setting()->get('braintree_private_key', config('netcore.module-payment.braintree.private_key')));
         }
     }
 
