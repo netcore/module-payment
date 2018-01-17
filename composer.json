@@ -25,7 +25,8 @@
     },
     "require": {
         "rmccue/requests": "^1.7",
-        "laravel/cashier-braintree": "~2.0"
+        "laravel/cashier-braintree": "~2.0",
+        "netcore/module-setting": "^1.0"
     },
     "minimum-stability": "dev"
 }
