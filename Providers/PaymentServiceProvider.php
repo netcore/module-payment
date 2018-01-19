@@ -2,6 +2,7 @@
 
 namespace Modules\Payment\Providers;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Modules\Payment\Repositories\PaymentRepository;
@@ -39,15 +40,18 @@ class PaymentServiceProvider extends ServiceProvider
     public function registerBreintree()
     {
         // @TODO: can we do better than this?
-        $setting = app(SettingRepository::class);
+        try {
+            $setting = app(SettingRepository::class);
 
-        if (config('netcore.module-payment.braintree.enabled'))
-        {
-            \Braintree_Configuration::environment(config('netcore.module-payment.braintree.environment'));
-            \Braintree_Configuration::merchantId($setting->get('braintree_merchant_id', config('netcore.module-payment.braintree.merchant_id')));
-            \Braintree_Configuration::publicKey($setting->get('braintree_public_key', config('netcore.module-payment.braintree.public_key')));
-            \Braintree_Configuration::privateKey($setting->get('braintree_private_key', config('netcore.module-payment.braintree.private_key')));
-        }
+            if (config('netcore.module-payment.braintree.enabled'))
+            {
+                \Braintree_Configuration::environment(config('netcore.module-payment.braintree.environment'));
+                \Braintree_Configuration::merchantId($setting->get('braintree_merchant_id', config('netcore.module-payment.braintree.merchant_id')));
+                \Braintree_Configuration::publicKey($setting->get('braintree_public_key', config('netcore.module-payment.braintree.public_key')));
+                \Braintree_Configuration::privateKey($setting->get('braintree_private_key', config('netcore.module-payment.braintree.private_key')));
+            }
+        } catch (QueryException $e) {}
+
 
     }
 
