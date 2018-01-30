@@ -16,6 +16,7 @@ class Paysera
         $this->projectId = config('netcore.module-payment.paysera.projectId');
         $this->secret = config('netcore.module-payment.paysera.secret');
         $this->sandbox = config('netcore.module-payment.paysera.sandbox');
+        $this->prefix = config('netcore.module-payment.paysera.order_prefix', '');
     }
 
     /**
@@ -40,7 +41,7 @@ class Paysera
             $url = WebToPay::redirectToPayment([
                 'projectid'     => $this->projectId,
                 'sign_password' => $this->secret,
-                'orderid'       => $payment->id,
+                'orderid'       => $this->prefix . $payment->id,
                 'amount'        => ($amount * 100),
                 'currency'      => $currency,
                 'country'       => $country,
@@ -73,7 +74,7 @@ class Paysera
 
             \Log::info($response);
 
-            $payment = Payment::find($response['orderid']);
+            $payment = Payment::find(str_replace($this->prefix, '', $response['orderid']));
 
             if ($payment && $response['status'] == 1) {
                 $payment->status = 'closed';

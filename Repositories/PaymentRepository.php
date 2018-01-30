@@ -51,12 +51,24 @@ class PaymentRepository
     {
         $this->invoice = true;
 
-        invoice()
-            ->forUser($data['user'])
-            ->setItems($data['items'])
-            ->setPaymentDetails($data['method'])
-            ->setSender($data['sender_data'])
-            ->make();
+        if(isset($data['vat'])) {
+            invoice()
+                ->forUser($data['user'])
+                ->setItems($data['items'])
+                ->setPaymentDetails($data['method'])
+                ->setSender($data['sender_data'])
+                ->setVat($data['vat'])
+                ->make();
+        } else {
+            invoice()
+                ->forUser($data['user'])
+                ->setItems($data['items'])
+                ->setPaymentDetails($data['method'])
+                ->setSender($data['sender_data'])
+                ->make();
+        }
+
+
 
         return $this;
     }
