@@ -2,9 +2,9 @@
 
 namespace Modules\Payment\Providers;
 
-use Illuminate\Database\QueryException;
+use Exception;
+use Braintree_Configuration;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
 use Modules\Payment\Repositories\PaymentRepository;
 use Modules\Setting\Repositories\SettingRepository;
 
@@ -27,9 +27,8 @@ class PaymentServiceProvider extends ServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
-        $this->registerFactories();
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-        $this->registerBreintree();
+        $this->registerBraintree();
     }
 
     /**
@@ -37,22 +36,21 @@ class PaymentServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerBreintree()
+    public function registerBraintree()
     {
-        // @TODO: can we do better than this?
         try {
-            $setting = app(SettingRepository::class);
+            if (config('netcore.module-payment.braintree.enabled')) {
+                /** @var $settings SettingRepository */
+                $settings = app(SettingRepository::class);
 
-            if (config('netcore.module-payment.braintree.enabled'))
-            {
-                \Braintree_Configuration::environment(config('netcore.module-payment.braintree.environment'));
-                \Braintree_Configuration::merchantId($setting->get('braintree_merchant_id', config('netcore.module-payment.braintree.merchant_id')));
-                \Braintree_Configuration::publicKey($setting->get('braintree_public_key', config('netcore.module-payment.braintree.public_key')));
-                \Braintree_Configuration::privateKey($setting->get('braintree_private_key', config('netcore.module-payment.braintree.private_key')));
+                Braintree_Configuration::environment($settings->get('braintree_environment'));
+                Braintree_Configuration::merchantId($settings->get('braintree_merchant_id'));
+                Braintree_Configuration::publicKey($settings->get('braintree_public_key'));
+                Braintree_Configuration::privateKey($settings->get('braintree_private_key'));
             }
-        } catch (QueryException $e) {}
-
-
+        } catch (Exception $e) {
+            logger()->critical('[Module-Payment] @ PaymentServiceProvider - ' . $e->getMessage());
+        }
     }
 
     /**
@@ -75,10 +73,11 @@ class PaymentServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->publishes([
-            __DIR__.'/../Config/config.php' => config_path('netcore/module-payment.php'),
+            __DIR__ . '/../Config/config.php' => config_path('netcore/module-payment.php'),
         ], 'config');
+
         $this->mergeConfigFrom(
-            __DIR__.'/../Config/config.php', 'netcore/module-payment'
+            __DIR__ . '/../Config/config.php', 'netcore/module-payment'
         );
     }
 
@@ -91,15 +90,15 @@ class PaymentServiceProvider extends ServiceProvider
     {
         $viewPath = resource_path('views/modules/payment');
 
-        $sourcePath = __DIR__.'/../Resources/views';
+        $sourcePath = __DIR__ . '/../Resources/views';
 
         $this->publishes([
-            $sourcePath => $viewPath
-        ],'views');
+            $sourcePath => $viewPath,
+        ], 'views');
 
         $this->loadViewsFrom(array_merge(array_map(function ($path) {
             return $path . '/modules/payment';
-        }, \Config::get('view.paths')), [$sourcePath]), 'payment');
+        }, config('view.paths')), [$sourcePath]), 'payment');
     }
 
     /**
@@ -114,18 +113,7 @@ class PaymentServiceProvider extends ServiceProvider
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, 'payment');
         } else {
-            $this->loadTranslationsFrom(__DIR__ .'/../Resources/lang', 'payment');
-        }
-    }
-
-    /**
-     * Register an additional directory of factories.
-     * @source https://github.com/sebastiaanluca/laravel-resource-flow/blob/develop/src/Modules/ModuleServiceProvider.php#L66
-     */
-    public function registerFactories()
-    {
-        if (! app()->environment('production')) {
-            app(Factory::class)->load(__DIR__ . '/Database/factories');
+            $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'payment');
         }
     }
 
@@ -137,7 +125,7 @@ class PaymentServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            Laravel\Cashier\CashierServiceProvider::class
+            Laravel\Cashier\CashierServiceProvider::class,
         ];
     }
 }
